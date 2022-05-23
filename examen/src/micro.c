@@ -365,31 +365,6 @@ int darBajaMicro(eMicro* micros, int tamM, eTipo* tipos, int tamT, eEmpresa* emp
 	return todoOk;
 }
 
-//REVISAR ESTA AL PEDO
-/*
-int buscarMicro(eMicro* micros, int tam, int id, int* pIndice)
-{
-	int todoOk=0;
-
-	if(micros!=NULL && tam>0 && pIndice!=NULL)
-	{
-		*pIndice=-1;
-
-		for(int i=0; i<tam; i++)
-		{
-			if(micros[i].id == id)
-			{
-				*pIndice = i;
-				break;
-			}
-		}
-
-		todoOk=1;
-	}
-	return todoOk;
-} */
-
-
 int validarMicro(eMicro* micros, int tam, int id)
 {
 	int esValido=0;
