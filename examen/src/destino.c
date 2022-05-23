@@ -17,11 +17,13 @@ int listarDestinos(eDestino* destinos, int tam)
 
 	if(destinos!=NULL && tam>0)
 	{
-		printf("        ****Lista de Destinos ***\n");
+		printf("   ****Lista de Destinos ***\n");
 		printf("-------------------------------\n");
+		printf("Id         Destino     Precio\n");
+		printf("------------------------------\n");
 		for(int i=0; i<tam; i++)
 		{
-			printf("%5d      %20s     %.2f\n", destinos[i].id, destinos[i].descripcion,  destinos[i].precio);
+			printf("%5d   %10s    $%.2f\n", destinos[i].id, destinos[i].descripcion,  destinos[i].precio);
 		}
 		todoOk=1;
 		printf("\n\n");
@@ -58,7 +60,7 @@ int validarDestino(eDestino* destinos, int tam, int id)
 	int indice;
 
 	buscarDestino(destinos, tam, id, &indice);
-	if(indice!=-1)	// si es >=0 significa que encontro un id valiido y me devuelve el  indice
+	if(indice!=-1)
 	{
 		esValido=1;
 	}

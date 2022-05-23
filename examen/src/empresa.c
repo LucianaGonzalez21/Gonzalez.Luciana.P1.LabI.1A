@@ -19,11 +19,13 @@ int listarEmpresas(eEmpresa* empresas, int tam)
 
 	if(empresas!=NULL && tam>0)
 	{
-		printf("        ****Lista de Empresas ***\n");
-		printf("-------------------------------\n");
+		printf(" ****Lista de Empresas ***\n");
+		printf("--------------------------\n");
+		printf("Id                Empresa\n");
+		printf("--------------------------\n");
 		for(int i=0; i<tam; i++)
 		{
-			printf("%5d      %20s\n", empresas[i].id, empresas[i].descripcion);
+			printf("%4d          %10s\n", empresas[i].id, empresas[i].descripcion);
 		}
 		todoOk=1;
 		printf("\n\n");
@@ -60,7 +62,7 @@ int validarEmpresa(eEmpresa* empresas, int tam, int id)
 	int indice;
 
 	buscarEmpresa(empresas, tam, id, &indice);
-	if(indice!=-1)	// si es >=0 significa que encontro un id valiido y me devuelve el  indice
+	if(indice!=-1)
 	{
 		esValido=1;
 	}

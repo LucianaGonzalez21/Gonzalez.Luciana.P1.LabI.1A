@@ -14,16 +14,12 @@
 #include "empresa.h"
 #include <string.h>
 
-
-/// @brief Muestra el menu de opciones y pide al usuario que ingrese un numero
-///
-/// @param opcion Puntero al espacio de memoria donde se alojara la opcion que haya ingresado el usuario
-/// @return Devuelve 0 si consiguio una opcion valida, -1 si no
 int menuPrincipal(int *opcion) {
 
 	int rta;
 
 	if (opcion != NULL) {
+		printf("**MENU DE OPCIONES**\n");
 		printf("1.ALTA micro\n");
 		printf("2.MODIFICAR micro\n");
 		printf("3.BAJA micro\n");
@@ -33,9 +29,19 @@ int menuPrincipal(int *opcion) {
 		printf("7.LISTAR destinos\n");
 		printf("8.ALTA viaje\n");
 		printf("9.LISTAR viajes\n");
-		printf("10.SALIR\n\n");
+		printf("10. Mostrar lista de micros de una Empresa.\n");
+		printf("11. Mostrar lista de micros de un Tipo.\n");
+		printf("12. Mostrar promedio de micros vip sobre el total de micros de una empresa\n");
+		printf("13. Mostrar micros separados por empresa .\n");
+		printf("14. Mostrar empresa/s con mayor capacidad\n");
+		printf("15. Mostrar la empresa con menor cantidad de micros\n");
+		printf("16. Mostrar viajes de un micro\n");
+		printf("17. Mostrar suma de precios de viajes que realizo un micro\n");
+		printf("18. Mostrar los micros que viajaron a und destino con su fecha\n");
+		printf("19. Mostrar viajes realizados en una fecha\n");
+		printf("20.SALIR\n\n");
 
-		rta = utn_getNumero(opcion, "Ingrese una opcion: ","Error. Opcion no valida\n", 1, 10, 3);
+		rta = utn_getNumero(opcion, "Ingrese una opcion: ","Error. Opcion no valida\n", 1, 20, 3);
 	}
 
 	return rta;
@@ -58,12 +64,6 @@ int inicializarMicros(eMicro* micros, int tam) {
 	return todoOk;
 }
 
-/// @brief Busca en el vector un lugar libre, y si lo encuentra devuelve por referencia la posicion o -1 si no lo encontro
-///
-/// @param  Es el vector de micros
-/// @param Es el largo del vector
-/// @param pIndice Puntero al espacio de memoria donde se alojara el indice o -1
-/// @return Devuelve 0 si hay error de parametros, 1 si no
 int buscarPosicionLibre(eMicro* micros, int tam, int* pIndice)
 {
 	int todoOk=0;
@@ -86,6 +86,20 @@ int buscarPosicionLibre(eMicro* micros, int tam, int* pIndice)
 	return todoOk;
 }
 
+int verificarDisponibilidadVectorMicros(eMicro* micros, int tam)
+{
+	int estaVacio=1;
+
+	for(int i=0; i<tam; i++)
+	{
+		if(!micros[i].isEmpty)
+		{
+			estaVacio=0;
+			break;
+		}
+	}
+	return estaVacio;
+}
 
 int agregarMicro(eMicro* micros, int tamM, eEmpresa* empresas, int tamE, eTipo* tipos, int tamT, int id, int idEmpresa, int idTipo,int capacidad)
 {
@@ -118,9 +132,11 @@ int cargarMicro(eMicro* micros, int tamM, eTipo* tipos, int tamT, eEmpresa* empr
 	if(micros!=NULL && tamM>0 && tipos!=NULL && tamT>0 && empresas!=NULL && tamE>0 && pIndex!=NULL)
 	{
 		if( listarEmpresas(empresas, tamE) &&
-			!utn_getNumero(&nuevoMicro.idEmpresa, "Ingrese el numero de la empresa: ", "Error, no valido.\n", 1000, 1003, 3) &&
+			!utn_getNumero(&nuevoMicro.idEmpresa, "Ingrese el Id de la empresa: ", "Error, no valido.\n", 0, 2000, 3) &&	//1000-1003
+			validarEmpresa(empresas, tamE, nuevoMicro.idEmpresa) &&
 			listarTipos(tipos, tamT) &&
-			!utn_getNumero(&nuevoMicro.idTipo, "Ingrese el numero del tipo: ", "Error, no valido.\n", 2000, 2003, 3) &&
+			!utn_getNumero(&nuevoMicro.idTipo, "Ingrese el Id del tipo: ", "Error, no valido.\n", 0, 3000, 3) &&	///2000-2003
+			validarTipo(tipos, tamT, nuevoMicro.idTipo) &&
 			!utn_getNumero(&nuevoMicro.capacidad, "Ingrese la capacidad del micro (entre 1 y 50): ", "Error, no valido.\n", 1, 50, 3))
 		{
 
@@ -143,12 +159,13 @@ int mostrarMicro(eMicro unMicro, eTipo* tipos, int tamT, eEmpresa* empresas, int
 
 	if(tipos!=NULL && tamT>0 && empresas!=NULL && tamE>0)
 	{
-		if(!unMicro.isEmpty)
+		if(!unMicro.isEmpty)	// for(int i=0; i<tamCliente; i++)
+								//{if(clientes[i].id == unMicro.idCliente) ---> printf }
 		{
 			cargarDescripcionTipo(tipos, tamT, unMicro.idTipo, descripcionTipo);
 			cargarDescripcionEmpresa(empresas, tamE, unMicro.idEmpresa, descripcionEmpresa);
 
-			printf("%4d   %10s   %10s   %d\n",
+			printf("%4d    %10s   %10s           %d\n",
 					unMicro.id,
 					descripcionEmpresa,
 					descripcionTipo,
@@ -163,6 +180,7 @@ int mostrarMicro(eMicro unMicro, eTipo* tipos, int tamT, eEmpresa* empresas, int
 int mostrarMicros(eMicro* micros, int tamM, eTipo* tipos, int tamT, eEmpresa* empresas, int tamE)
 {
 	int todoOk=-1;
+	int flag=0;
 
 	if(micros!=NULL && tamM>0 && tipos!=NULL && tamT>0 && empresas!=NULL && tamE>0)
 	{
@@ -177,7 +195,13 @@ int mostrarMicros(eMicro* micros, int tamM, eTipo* tipos, int tamT, eEmpresa* em
 			if(!micros[i].isEmpty)
 			{
 				mostrarMicro(micros[i], tipos, tamT, empresas, tamE);
+				flag=1;
 			}
+		}
+
+		if(!flag)
+		{
+			printf("No hay micros cargados en el sistema.\n\n");
 		}
 		printf("\n\n");
 	}
@@ -233,52 +257,60 @@ int modificarMicro(eMicro *micros, int tamM, eTipo* tipos, int tamT, eEmpresa* e
 
 		if (micros != NULL && tamM>0 && tipos!=NULL && tamT>0 && empresas!=NULL && tamE>0)
 		{
-			mostrarMicros(micros, tamM, tipos, tamT, empresas, tamE);
 
-			if (!utn_getNumero(&id, "Ingrese el id del micro a modificar\n","Error\n", 100, 10000, 3))
+			if(!verificarDisponibilidadVectorMicros(micros, tamM))
 			{
-				indice = buscarMicroPorId(micros, tamM, id);
+				mostrarMicros(micros, tamM, tipos, tamT, empresas, tamE);
+
+				if (!utn_getNumero(&id, "Ingrese el id del micro a modificar\n","Error\n", 100, 10000, 3))
+				{
+					indice = buscarMicroPorId(micros, tamM, id);
+				}
+				else
+				{
+					return todoOk;
+				}
+
+				if (indice>=0 && !menuModificarMicro(&opcionModificar))
+				{
+					todoOk=1;
+
+					switch (opcionModificar) {
+					case 1:
+						printf("Modificar tipo\n");
+						if(listarTipos(tipos, tamT) &&
+							!utn_getNumero(&tipo, "Ingrese el numero del tipo: ", "Error, no valido.\n", 2000, 2003, 3))
+						{
+							micros[indice].idTipo = tipo;
+							printf("Id         Empresa        Tipo          Capacidad\n");
+							printf("------------------------------------------------------\n");
+							mostrarMicro(micros[indice], tipos, tamT, empresas, tamE);
+						}
+						break;
+					case 2:
+						printf("Modificar Capacidad\n");
+						if(!utn_getNumero(&capacidad, "Ingrese la capacidad del micro (entre 1 y 50): ", "Error, no valido.\n", 1, 50, 3))
+						{
+							micros[indice].capacidad = capacidad;
+							printf("Id         Empresa        Tipo          Capacidad\n");
+							printf("------------------------------------------------------\n");
+							mostrarMicro(micros[indice], tipos, tamT, empresas, tamE);
+						}
+						break;
+					default:
+						break;
+					}
+				} else if (indice<0)
+				{
+					printf("Id no encontrado\n");
+				} else
+				{
+					printf("Opcion no valida\n");
+				}
 			}
 			else
 			{
-				return todoOk;
-			}
-
-			if (indice>=0 && !menuModificarMicro(&opcionModificar))
-			{
-				todoOk=1;	//REVISAR
-
-				switch (opcionModificar) {
-				case 1:
-					printf("Modificar tipo\n");
-					if(listarTipos(tipos, tamT) &&
-						!utn_getNumero(&tipo, "Ingrese el numero del tipo: ", "Error, no valido.\n", 2000, 2003, 3))
-					{
-						micros[indice].idTipo = tipo;
-						printf("Id         Empresa        Tipo          Capacidad\n");
-						printf("------------------------------------------------------\n");
-						mostrarMicro(micros[indice], tipos, tamT, empresas, tamE);
-					}
-					break;
-				case 2:
-					printf("Modificar Capacidad\n");
-					if(!utn_getNumero(&capacidad, "Ingrese la capacidad del micro (entre 1 y 50): ", "Error, no valido.\n", 1, 50, 3))
-					{
-						micros[indice].capacidad = capacidad;
-						printf("Id         Empresa        Tipo          Capacidad\n");
-						printf("------------------------------------------------------\n");
-						mostrarMicro(micros[indice], tipos, tamT, empresas, tamE);
-					}
-					break;
-				default:
-					break;
-				}
-			} else if (indice<0)
-			{
-				printf("Id no encontrado\n");
-			} else
-			{
-				printf("Opcion no valida\n");
+				printf("No hay micros cargados.\n");
 			}
 	}
 
@@ -313,19 +345,28 @@ int darBajaMicro(eMicro* micros, int tamM, eTipo* tipos, int tamT, eEmpresa* emp
 	if(micros!=NULL && tamM>0 && tipos!=NULL && tamT>0 && empresas!=NULL && tamE>0)
 	{
 		todoOk=0;
-		mostrarMicros(micros, tamM, tipos, tamT, empresas, tamE);
 
-		if(!utn_getNumero(&id, "Ingrese el id del micro al que desea dar de baja: ", "Error, id no valido.\n", 100, 10000,3)
-			&& !eliminarMicro(micros, tamM, id))	//compruebo que encontro el id
+		if(!verificarDisponibilidadVectorMicros(micros, tamM))
 		{
-			todoOk=1;
+			mostrarMicros(micros, tamM, tipos, tamT, empresas, tamE);
+
+			if(!utn_getNumero(&id, "Ingrese el id del micro al que desea dar de baja: ", "Error, id no valido.\n", 100, 10000,3)
+				&& !eliminarMicro(micros, tamM, id))
+			{
+				todoOk=1;
+			}
+		}
+		else
+		{
+			printf("No hay micros cargados.\n");
 		}
 	}
 
 	return todoOk;
 }
 
-//REVISAR
+//REVISAR ESTA AL PEDO
+/*
 int buscarMicro(eMicro* micros, int tam, int id, int* pIndice)
 {
 	int todoOk=0;
@@ -346,14 +387,15 @@ int buscarMicro(eMicro* micros, int tam, int id, int* pIndice)
 		todoOk=1;
 	}
 	return todoOk;
-}
+} */
+
 
 int validarMicro(eMicro* micros, int tam, int id)
 {
 	int esValido=0;
 	int indice;
 
-	buscarMicro(micros, tam, id, &indice);
+	indice = buscarMicroPorId(micros, tam, id);
 	if(indice!=-1)
 	{
 		esValido=1;
@@ -400,4 +442,287 @@ int ordenarMicros(eMicro* micros, int tamM, eEmpresa* empresas, int tamE, int or
 	}
 
 	return todoOk;
+}
+
+//NUEVO
+//mostrar micros de una empresa que elija el usuario
+
+int mostrarMicrosEmpresa(eMicro* micros, int tamM, eEmpresa* empresas, int tamE, eTipo* tipos, int tamT)
+{
+	int todoOk=0;
+	int id;
+	int flag=0;
+	char descripcion[20];
+
+	if(micros!=NULL && empresas!=NULL && tipos!=NULL && tamM>0 && tamE>0 && tamT>0)
+	{
+		todoOk=1;
+
+		if(listarEmpresas(empresas, tamT) &&
+			!utn_getNumero(&id, "Ingrese el Id de la Empresa: ", "Error, no valido\n", 0, 4000, 3)
+		)
+		{
+			if(!validarEmpresa(empresas, tamE, id))
+			{
+				printf("Id no encontrado.\n");
+			}
+			else
+			{
+				printf("      ***Lista de micros***\n");
+				printf("Id         Empresa        Tipo          Capacidad\n");
+				printf("------------------------------------------------------\n");
+				for(int i=0; i<tamM; i++)
+				{
+					if(micros[i].idEmpresa == id)
+					{
+						mostrarMicro(micros[i], tipos, tamT, empresas, tamE);
+						flag=1;
+					}
+				}
+
+				if(!flag)
+				{
+					cargarDescripcionEmpresa(empresas, tamE, id, descripcion);
+					printf("No hay micros de la empresa %s.\n\n", descripcion);
+				}
+				printf("\n\n");
+			}
+		}
+	}
+
+	return todoOk;
+}
+
+
+//mostrar micros de un tipo que elija el usuario
+int mostrarMicrosTipo(eMicro* micros, int tamM, eTipo* tipos, int tamT, eEmpresa* empresas, int tamE)
+{
+	int todoOk=0;
+	int id;
+	int flag=0;
+	char descripcion[20];
+
+	if(micros!=NULL && tipos!= NULL && empresas!=NULL && tamM>0 && tamT>0 && tamE)
+	{
+		todoOk=1;
+
+		if(listarTipos(tipos, tamT) &&
+			!utn_getNumero(&id, "Ingrese el Id del tipo: ", "Error, no valido.\n", 0, 3000, 3))
+		{
+			if(!validarTipo(tipos, tamT, id))
+			{
+				printf("Id no encontrado.\n");
+			}
+			else
+			{
+				printf("      ***Lista de micros***\n");
+				printf("Id         Empresa        Tipo          Capacidad\n");
+				printf("------------------------------------------------------\n");
+				for(int i=0; i<tamM; i++)
+				{
+					if(micros[i].idTipo == id)
+					{
+						mostrarMicro(micros[i], tipos, tamT, empresas, tamE);
+						flag=1;
+					}
+				}
+
+				if(!flag)
+				{
+					cargarDescripcionTipo(tipos, tamT, id, descripcion);
+					printf("No hay micros del Tipo %s\n", descripcion);
+				}
+			}
+		}
+	}
+
+	return todoOk;
+}
+
+
+//Informar Promedio de micros de tipo Vip sobre el total de micros de una empresa
+int informarPromedioDeMicrosVip(eMicro* micros, int tamM, eEmpresa* empresas, int tamE)
+{
+	int todoOk=0;
+	int contador[4]= {0,0,0,0};
+	int contadorMicros[4] = {0,0,0,0};
+	float promedios[4]= {0,0,0,0};
+	char descripcion1[20];
+
+	if(micros!=NULL && tamM>0 && empresas!=NULL && tamE>0)
+	{
+		todoOk=1;
+
+
+		for(int i=0; i<tamE;i++)
+		{
+			for(int j=0; j<tamM; j++)
+			{
+				if(!micros[j].isEmpty && empresas[i].id == micros[j].idEmpresa)
+				{
+					contadorMicros[i]++;
+					if(micros[j].idTipo == 2003 && empresas[i].id == micros[j].idEmpresa) //vip 2003
+					{
+						contador[i]++;
+					}
+				}
+			}
+		}
+
+
+		for(int i=0; i<tamE; i++)
+		{
+			if(contadorMicros[i]>0)
+			{
+				promedios[i] = (float)contador[i] / contadorMicros[i];
+			}
+		}
+
+
+		printf("Promedio de micros de tipo Vip sobre el total de micros de una empresa.\n");
+		for(int i=0; i<tamE; i++)
+		{
+			cargarDescripcionEmpresa(empresas, tamM, empresas[i].id, descripcion1);
+			printf("Empresa %s Promedio: %.2f \n", descripcion1, promedios[i]);
+		}
+
+	}
+
+	return todoOk;
+}
+
+
+//mostrar micros por empresa
+int mostrarMicrosPorEmpresa(eMicro* micros, int tamM, eTipo* tipos, int tamT, eEmpresa* empresas, int tamE)
+{
+	int todoOk=0;
+	int flag;
+
+	if(micros!=NULL && tamM>0 && tipos!=NULL && tamT>0 && empresas!=NULL && tamE>0)
+	{
+		todoOk=1;
+
+		for(int i=0; i<tamE; i++)	//recorro empresas
+		{
+			flag=0;
+			printf("Empresa: %s\n\n", empresas[i].descripcion);
+			printf("Id         Empresa        Tipo          Capacidad\n");
+			printf("------------------------------------------------------\n");
+
+			for(int j=0; j<tamM; j++)	//recorro micros
+			{
+				if(empresas[i].id == micros[j].idEmpresa)
+				{
+					mostrarMicro(micros[j], tipos, tamT, empresas, tamE);
+					flag=1;
+				}
+			}
+
+			if(!flag)
+			{
+				printf("No hay micros.\n\n");
+			}
+			printf("\n\n");
+		}
+	}
+
+
+	return todoOk;
+}
+
+
+//Informar la o las empresas que pueden transportar más pasajeros (mayor acumulador de capacidades de sus micros)
+int informarEmpresaMayorCapacidad(eMicro* micros, int tamM, eEmpresa* empresas, int tamE)
+{
+	int todoOk=0;
+	int capacidad[4] = {0,0,0,0};
+	int flag=0;
+	int mayor;
+
+	if(micros!=NULL && tamM>0 && empresas!=NULL && tamE>0)
+	{
+		todoOk=1;
+
+
+		for(int i=0; i<tamE; i++)
+		{
+			for(int j=0; j<tamM; j++)
+			{
+				if(!micros[j].isEmpty && empresas[i].id == micros[j].idEmpresa)
+				{
+					capacidad[i] += micros[j].capacidad;
+				}
+			}
+		}
+
+
+		for(int i=0; i<4; i++)
+		{
+			if(!flag || capacidad[i] > mayor)
+			{
+				mayor = capacidad[i];
+				flag=1;
+			}
+		}
+
+
+		printf("Empresa/s con mayor capacidad: \n");
+		for(int i=0; i<tamE; i++)
+		{
+			if(capacidad[i] == mayor)
+			{
+				printf("%s\n", empresas[i].descripcion);
+			}
+		}
+	}
+
+	return todoOk;
+}
+
+//Mostrar la empresa con menor cantidad de MICROS
+int informarEmpresaMenorCantidadMicros(eMicro* micros, int tamM, eEmpresa* empresas, int tamE)
+{
+	int todoOk=0;
+		int contadores[4] = {0,0,0,0};
+		int flag=0;
+		int menor;
+
+		if(micros!=NULL && tamM>0 && empresas!=NULL && tamE>0)
+		{
+			todoOk=1;
+
+
+			for(int i=0; i<tamE; i++)
+			{
+				for(int j=0; j<tamM; j++)
+				{
+					if(!micros[j].isEmpty && empresas[i].id == micros[j].idEmpresa)
+					{
+						contadores[i]++;
+					}
+				}
+			}
+
+
+			for(int i=0; i<4; i++)
+			{
+				if(!flag || contadores[i] < menor)
+				{
+					menor = contadores[i];
+					flag=1;
+				}
+			}
+
+
+			printf("Empresa/s con menor cantidad de micros: \n");
+			for(int i=0; i<tamE; i++)
+			{
+				if(contadores[i] == menor)
+				{
+					printf("%s\n", empresas[i].descripcion);
+				}
+			}
+		}
+
+		return todoOk;
 }

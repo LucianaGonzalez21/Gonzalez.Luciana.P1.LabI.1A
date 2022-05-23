@@ -113,7 +113,7 @@ int utn_getCaracter(char* pResultado, char* mensaje, char* mensajeError, char mi
             {
                 *pResultado = buffer;
                 retorno=0;
-                //break;
+                break;
             }
             else
             {

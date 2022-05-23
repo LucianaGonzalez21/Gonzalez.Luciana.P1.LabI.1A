@@ -20,4 +20,10 @@ typedef struct{
 
 #endif /* FECHA_H_ */
 
+/// @brief Valida que una fecha sea valida, segun dia, mes y anio
+///
+/// @param dia
+/// @param mes
+/// @param anio
+/// @return Devuelve 1 si la fecha es valida, 0 si no
 int validarFecha(int dia, int mes, int anio);

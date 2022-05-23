@@ -28,7 +28,7 @@ int main(void) {
 	setbuf(stdout, NULL);
 
 	int opcion;
-	int index=100;	//id automatico
+	int index=100;
 	int indexViaje=500;
 	int flag=0;
 	int flagV=0;
@@ -65,7 +65,6 @@ int main(void) {
 
 				switch (opcion) {
 				case 1:
-					printf("opcion 1 ALTA\n");
 					if(cargarMicro(micros, TAM_MICRO, tipos, TAM_TIPOS, empresas, TAM_EMPRESA, &index))
 					{
 						printf("Micro cargado con exito.\n\n");
@@ -77,18 +76,20 @@ int main(void) {
 					}
 					break;
 				case 2:
-					printf("opcion 2 MODIFICAR\n");
 					if(flag && modificarMicro(micros, TAM_MICRO, tipos, TAM_TIPOS, empresas, TAM_EMPRESA))
 					{
 						printf("Modificacion exitosa.\n\n");
 					}
-					else
+					else if(!flag)
 					{
 						printf("Error. Primero debe cargar al menosun micro\n\n");
 					}
+					else
+					{
+						printf("Error al modificar.\n\n");
+					}
 					break;
 				case 3:
-					printf("opcion 3 BAJA\n");
 					if(flag && darBajaMicro(micros, TAM_MICRO, tipos, TAM_TIPOS, empresas, TAM_EMPRESA))
 					{
 						printf("Micro dado de baja con exito.\n\n");
@@ -103,7 +104,6 @@ int main(void) {
 					}
 					break;
 				case 4:
-					printf("opcion 4 LISTAR MICROS\n");
 					if(flag)
 					{
 						if(!ordenarMicros(micros, TAM_MICRO, empresas, TAM_EMPRESA, 1))
@@ -120,28 +120,24 @@ int main(void) {
 					}
 					break;
 				case 5:
-					printf("Opcion 5 LISTAR EMPRESAS\n");
 					if(!listarEmpresas(empresas, TAM_EMPRESA))
 					{
 						printf("Error al listar empresas\n\n");
 					}
 					break;
 				case 6:
-					printf("OPCION 6 LISTAR TIPOS\n");
 					if(!listarTipos(tipos, TAM_TIPOS))
 					{
 						printf("Error al listar tipos\n\n");
 					}
 					break;
 				case 7:
-					printf("OPCION 7 LISTAR DESTINOS\n");
 					if(!listarDestinos(destinos, TAM_DESTINOS))
 					{
 						printf("Error al listar destinos\n\n");
 					}
 					break;
 				case 8:
-					printf("opcion 8 Alta viaje\n");
 					if(!cargarViaje(viajes, TAM_VIAJES, micros, TAM_MICRO, destinos, TAM_DESTINOS, tipos, TAM_TIPOS, empresas, TAM_EMPRESA, &indexViaje))
 					{
 
@@ -150,11 +146,10 @@ int main(void) {
 					else
 					{
 						flagV=1;
-						printf("Viaje cargado con exitos\n\n");
+						printf("Viaje cargado con exito\n\n");
 					}
 					break;
 				case 9:
-					printf("opcion 9 listar viajes\n");
 					if(flagV)
 					{
 						if(mostrarViajes(viajes, TAM_VIAJES, micros, TAM_MICRO, destinos, TAM_DESTINOS) == -1)
@@ -162,8 +157,102 @@ int main(void) {
 							printf("Error al intentar listar\n\n");
 						}
 					}
+					else
+					{
+						printf("Primero debe cargar un viaje.\n\n");
+					}
 					break;
 				case 10:
+					if(flag)
+					{
+						if(!mostrarMicrosEmpresa(micros, TAM_MICRO, empresas, TAM_EMPRESA, tipos, TAM_TIPOS))
+						{
+							printf("Error al mostrar\n");
+						}
+					}
+					break;
+				case 11:
+					if(flag)
+					{
+						if(!mostrarMicrosTipo(micros, TAM_MICRO, tipos, TAM_TIPOS, empresas, TAM_EMPRESA))
+						{
+							printf("Error al mostrar.\n\n");
+						}
+					}
+					break;
+				case 12:
+					if(flag)
+					{
+						if(!informarPromedioDeMicrosVip(micros, TAM_MICRO, empresas, TAM_EMPRESA))
+						{
+							printf("Error al mostrar.\n\n");
+						}
+					}
+					break;
+				case 13:
+					if(flag)
+					{
+						if(!mostrarMicrosPorEmpresa(micros, TAM_MICRO, tipos, TAM_TIPOS, empresas, TAM_EMPRESA))
+						{
+							printf("Error al mostrar.\n\n");
+						}
+					}
+					break;
+				case 14:
+					if(flag)
+					{
+						if(!informarEmpresaMayorCapacidad(micros, TAM_MICRO, empresas, TAM_EMPRESA))
+						{
+							printf("Error al mostrar.\n\n");
+						}
+					}
+					break;
+				case 15:
+					if(flag)
+					{
+						if(!informarEmpresaMenorCantidadMicros(micros, TAM_MICRO, empresas, TAM_EMPRESA))
+						{
+							printf("Error al informar.\n\n");
+						}
+					}
+					break;
+				case 16:
+					if(flag)
+					{
+						if(!mostrarViajesSegunMicro(viajes, TAM_VIAJES, micros, TAM_MICRO, empresas, TAM_EMPRESA, tipos, TAM_TIPOS, destinos, TAM_DESTINOS))
+						{
+							printf("Error al informar.\n\n");
+						}
+					}
+					break;
+				case 17:
+					if(flag)
+					{
+						if(!informarPrecioTotalDeViajeSegunMicro(viajes, TAM_VIAJES, micros, TAM_MICRO, empresas, TAM_EMPRESA, tipos, TAM_TIPOS, destinos, TAM_DESTINOS))
+						{
+							printf("Error al informar.\n\n");
+						}
+					}
+					break;
+				case 18:
+					if(flag)
+					{
+						if(!informarViajesADestino(viajes, TAM_VIAJES, micros, TAM_MICRO, destinos, TAM_DESTINOS, tipos, TAM_TIPOS, empresas, TAM_EMPRESA))
+						{
+							printf("Error al informar.\n\n");
+						}
+					}
+					break;
+				case 19:
+					if(flag)
+					{
+						if(!mostrarViajesSegunFecha(viajes, TAM_VIAJES, micros, TAM_MICRO, destinos, TAM_DESTINOS))
+						{
+							printf("Error al informar.\n\n");
+						}
+					}
+					break;
+				case 20:
 					printf("Usted ha salido\n");
 					break;
 				}
@@ -173,7 +262,7 @@ int main(void) {
 				printf("ERROR. Cantidad de reintentos agotada. \nPrograma finalizado\n");
 				break;
 			}
-		} while (opcion != 10);
+		} while (opcion != 20);
 
 		return EXIT_SUCCESS;
 

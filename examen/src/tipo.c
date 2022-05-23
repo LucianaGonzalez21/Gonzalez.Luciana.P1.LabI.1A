@@ -18,11 +18,13 @@ int listarTipos(eTipo* tipos, int tam)
 
 	if(tipos!=NULL && tam>0)
 	{
-		printf("        ****Lista de Tipos ***\n");
-		printf("-------------------------------\n");
+		printf("   ****Lista de Tipos ***\n");
+		printf("-------------------------\n");
+		printf("Id            Tipo\n");
+		printf("-------------------------\n");
 		for(int i=0; i<tam; i++)
 		{
-			printf("%4d      %20s\n", tipos[i].id, tipos[i].descripcion);
+			printf("%4d      %10s\n", tipos[i].id, tipos[i].descripcion);
 		}
 		todoOk=1;
 		printf("\n\n");
@@ -58,8 +60,8 @@ int validarTipo(eTipo* tipos, int tam, int id)
 	int esValido=0;
 	int indice;
 
-	buscarTipo(tipos, tam, id, &indice);//ya valido parametros en esa funcion
-	if(indice!=-1)	// si es >=0 significa que encontro un id valiido y me devuelve el  indice
+	buscarTipo(tipos, tam, id, &indice);
+	if(indice!=-1)
 	{
 		esValido=1;
 	}
