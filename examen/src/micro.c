@@ -159,8 +159,7 @@ int mostrarMicro(eMicro unMicro, eTipo* tipos, int tamT, eEmpresa* empresas, int
 
 	if(tipos!=NULL && tamT>0 && empresas!=NULL && tamE>0)
 	{
-		if(!unMicro.isEmpty)	// for(int i=0; i<tamCliente; i++)
-								//{if(clientes[i].id == unMicro.idCliente) ---> printf }
+		if(!unMicro.isEmpty)
 		{
 			cargarDescripcionTipo(tipos, tamT, unMicro.idTipo, descripcionTipo);
 			cargarDescripcionEmpresa(empresas, tamE, unMicro.idEmpresa, descripcionEmpresa);
